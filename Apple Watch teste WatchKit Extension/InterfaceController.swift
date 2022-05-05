@@ -12,17 +12,21 @@ import Foundation
 class InterfaceController: WKInterfaceController {
 
     @IBOutlet weak var label: WKInterfaceLabel!
+    private let motionController = MotionController.sharedInstance
+    
     override func awake(withContext context: Any?) {
         // Configure interface objects here.
     }
     
     override func willActivate() {
-        //fosgbfxgihodbfkc
         // This method is called when watch view controller is about to be visible to user
         print("Chegou aquiii")
         label.setText("Ativado")
-        MotionController.sharedInstance.delegate = self
-        MotionController.sharedInstance.start()
+        
+        motionController.label = label
+        motionController.delegate = self
+        motionController.start()
+        
     }
     
     override func didDeactivate() {

@@ -7,6 +7,7 @@
 //
 import Foundation
 import CoreMotion
+import WatchKit
 
 
 //
@@ -18,6 +19,7 @@ protocol MotionControllerDelegate
 class MotionController
 {
     var delegate: MotionControllerDelegate?
+    var label: WKInterfaceLabel?
     
     private var motionManager: CMMotionManager!
     private var lastShakeDate: NSDate?
@@ -36,25 +38,25 @@ class MotionController
     
     func start()
     {
-        print("Vai startar")
+        label?.setText("Começando")
         guard motionManager.isAccelerometerAvailable else { return }
-        print("Tem acelerometro")
-        
+        label?.setText("Tem acelerometro")
         // How often the motionManager looks for updates on acceleration. Can tune to your liking.
         motionManager.accelerometerUpdateInterval = 0.02
         
         let motionQueue = OperationQueue()
         
         motionManager.startAccelerometerUpdates(to: motionQueue) { (accelerometerData, err) -> Void in
-            print("Chegou aqui")
             guard err == nil else
             {
+                self.label?.setText("Erro")
                 print(err!.localizedDescription)
                 return
             }
             
             guard let data = accelerometerData else
             {
+                self.label?.setText("Sem dados de acelerometro")
                 print("No accelerometer data")
                 return
             }
@@ -62,7 +64,9 @@ class MotionController
             let valueX = fabs(data.acceleration.x)
             let valueY = fabs(data.acceleration.y)
             let maxValue = valueX > valueY ? valueX : valueY
-            
+
+            print("Value x\(valueX)")
+            print("Value y\(valueY)")
             
             
             if maxValue > self.kShakeThreshold
